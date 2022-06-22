@@ -1,5 +1,5 @@
 from datetime import datetime as dt
-from sqlalchemy import Boolean, CheckConstraint, Column, DateTime, Integer, String, Text, event
+from sqlalchemy import Boolean, CheckConstraint, Column, DateTime, event, Integer, String, Text
 
 from app.core.db import Base
 

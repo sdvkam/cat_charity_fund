@@ -7,7 +7,7 @@ from app.api.validators import (
     check_charity_project_opened,
     check_name_duplicate, check_full_amout_validly)
 from app.core.db import get_async_session
-from app.crud.charity_project import charity_project_crud
+from app.crud import charity_project_crud
 from app.schemas import CharityProjectCreate, CharityProjectUpdate, CharityProjectFull
 
 router = APIRouter()

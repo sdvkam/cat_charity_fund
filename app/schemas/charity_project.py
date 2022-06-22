@@ -13,7 +13,7 @@ class CharityProjectCreate(BaseModel):
     @validator('full_amount')
     def full_amount_must_more_zero(cls, value: int):
         if value <= 0:
-            raise ValueError('Требуемая сумма на проект длжна быть больше нуля.')
+            raise ValueError('Требуемая сумма на проект должна быть больше нуля.')
         return value
 
 
