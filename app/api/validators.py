@@ -22,25 +22,17 @@ async def check_charity_project_opened(
     session: AsyncSession,
 ) -> None:
     if charity_project.fully_invested:
-        raise HTTPException(status_code=422, detail='Целевой проект закрыт!')
+        raise HTTPException(status_code=400, detail='Закрытый проект нельзя редактировать!')
 
 
 async def check_can_delete_project(
     charity_project: CharityProject,
     session: AsyncSession,
 ) -> None:
-    if charity_project.fully_invested:
-        raise HTTPException(
-            status_code=422,
-            detail='Нельзя удалить закрытый проект!'
-        )
     if charity_project.invested_amount > 0:
         raise HTTPException(
-            status_code=422,
-            detail=(
-                'Нельзя удалить проект, в который уже были '
-                'инвестированы средства, его можно только закрыть!'
-            )
+            status_code=400,
+            detail='В проект были внесены средства, не подлежит удалению!'
         )
 
 
@@ -53,8 +45,8 @@ async def check_name_duplicate(
     )
     if charity_project_id is not None:
         raise HTTPException(
-            status_code=422,
-            detail='Целевой проект с таким именем уже существует!',
+            status_code=400,
+            detail='Проект с таким именем уже существует!',
         )
 
 

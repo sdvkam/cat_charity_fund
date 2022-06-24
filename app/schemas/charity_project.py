@@ -1,45 +1,44 @@
 from datetime import datetime
 from typing import Optional
 
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, Field, root_validator, PositiveInt
 
 
 class CharityProjectCreate(BaseModel):
 
     name: str = Field(..., max_length=100)
     description: str
-    full_amount: int = Field(..., gt=0)
+    full_amount: PositiveInt
 
-    @validator('full_amount')
-    def full_amount_must_more_zero(cls, value: int):
-        if value <= 0:
-            raise ValueError('Требуемая сумма на проект должна быть больше нуля.')
-        return value
+    @root_validator()
+    def at_least_fields_query_not_empty_and_null(cls, values):
+        for field in values:
+            if values[field] in [None, '']:
+                raise ValueError('Название, описание и требуемая сумма для проекта должны быть заполнены!')
+        return values
 
 
 class CharityProjectUpdate(BaseModel):
 
     name: Optional[str] = Field(max_length=100)
     description: Optional[str]
-    full_amount: Optional[int] = Field(gt=0)
+    full_amount: Optional[PositiveInt]
 
-    @validator('name')
-    def name_cant_be_null(cls, value: str):
-        if value is None:
-            raise ValueError('Имя для проекта не может быть пустым!')
-        return value
-
-    @validator('full_amount')
-    def full_amount_cant_be_null(cls, value: int):
-        if value is None:
-            raise ValueError('Поле для суммы на проект не может быть пустым!')
-        return value
+    @root_validator()
+    def all_fields_query_not_empty_and_null(cls, values):
+        errors = 0
+        for field in values:
+            if values[field] in [None, '']:
+                errors += 1
+        if errors == 3:
+            raise ValueError('Хотябы одно из полей: название, описание, требуемая сумма должны быть заполнены!')
+        return values
 
 
 class CharityProjectFull(BaseModel):
     name: str = Field(..., max_length=100)
     description: str
-    full_amount: int = Field(..., gt=0)
+    full_amount: PositiveInt
     id: int
     invested_amount: int
     fully_invested: bool

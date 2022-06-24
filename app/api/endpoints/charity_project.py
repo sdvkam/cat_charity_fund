@@ -1,3 +1,5 @@
+from typing import List
+
 from fastapi import APIRouter, Depends
 
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -7,8 +9,10 @@ from app.api.validators import (
     check_charity_project_opened,
     check_name_duplicate, check_full_amout_validly)
 from app.core.db import get_async_session
+from app.core.user import current_superuser
 from app.crud import charity_project_crud
 from app.schemas import CharityProjectCreate, CharityProjectUpdate, CharityProjectFull
+from app.services.complex_actions import investment_process
 
 router = APIRouter()
 
@@ -17,6 +21,7 @@ router = APIRouter()
     '/',
     response_model=CharityProjectFull,
     response_model_exclude_none=True,
+    dependencies=[Depends(current_superuser)],
 )
 async def create_charity_project(
     obj_in: CharityProjectCreate,
@@ -26,13 +31,13 @@ async def create_charity_project(
 
     Создаёт благотворительный проект."""
     await check_name_duplicate(obj_in.name, session)
-    new_charity_project = await charity_project_crud.create(obj_in, session)
+    new_charity_project = await investment_process(obj_in, session)
     return new_charity_project
 
 
 @router.get(
     '/',
-    response_model=list[CharityProjectFull],
+    response_model=List[CharityProjectFull],
     response_model_exclude_none=True,
 )
 async def get_all_charity_projects(
@@ -46,11 +51,11 @@ async def get_all_charity_projects(
 @router.delete(
     '/{project_id}',
     response_model=CharityProjectFull,
-    response_model_exclude_none=True,
+    dependencies=[Depends(current_superuser)],
 )
 async def delete_charity_project(
-        project_id: int,
-        session: AsyncSession = Depends(get_async_session),
+    project_id: int,
+    session: AsyncSession = Depends(get_async_session),
 ):
     """Только для суперюзеров.
 
@@ -65,7 +70,7 @@ async def delete_charity_project(
 @router.patch(
     '/{project_id}',
     response_model=CharityProjectFull,
-    response_model_exclude_none=True,
+    dependencies=[Depends(current_superuser)],
 )
 async def update_charity_project(
         project_id: int,
