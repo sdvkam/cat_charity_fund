@@ -1,4 +1,4 @@
-from sqlalchemy import Column, event, ForeignKey, Integer, Text
+from sqlalchemy import Column, ForeignKey, Integer, Text, event
 
 from .base import BasicBase, check_fields_full_amount_invested_amount
 

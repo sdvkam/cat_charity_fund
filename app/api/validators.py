@@ -1,4 +1,4 @@
-from fastapi import HTTPException
+from fastapi import HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.crud.charity_project import charity_project_crud
@@ -13,7 +13,10 @@ async def check_charity_project_exists(
         obj_id=project_id, session=session
     )
     if not project:
-        raise HTTPException(status_code=422, detail='Целевой проект не найден!')
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail='Целевой проект не найден!'
+        )
     return project
 
 
@@ -22,7 +25,10 @@ async def check_charity_project_opened(
     session: AsyncSession,
 ) -> None:
     if charity_project.fully_invested:
-        raise HTTPException(status_code=400, detail='Закрытый проект нельзя редактировать!')
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail='Закрытый проект нельзя редактировать!'
+        )
 
 
 async def check_can_delete_project(
@@ -31,7 +37,7 @@ async def check_can_delete_project(
 ) -> None:
     if charity_project.invested_amount > 0:
         raise HTTPException(
-            status_code=400,
+            status_code=status.HTTP_400_BAD_REQUEST,
             detail='В проект были внесены средства, не подлежит удалению!'
         )
 
@@ -45,18 +51,19 @@ async def check_name_duplicate(
     )
     if charity_project_id is not None:
         raise HTTPException(
-            status_code=400,
+            status_code=status.HTTP_400_BAD_REQUEST,
             detail='Проект с таким именем уже существует!',
         )
 
 
 async def check_full_amout_validly(
     charity_project: CharityProject,
-    new_full_amout: int,
+    full_amout: int,
     session: AsyncSession,
 ) -> None:
-    if new_full_amout <= 0 or new_full_amout < charity_project.invested_amount:
+    if full_amout <= 0 or full_amout < charity_project.invested_amount:
         raise HTTPException(
-            status_code=422,
-            detail=f'Требуемая для проекта сумма должна быть не меньше внесенной суммы = {charity_project.invested_amount}.'
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail=('Требуемая для проекта сумма должна быть не меньше '
+                    f'внесенной суммы = {charity_project.invested_amount}.')
         )

@@ -1,4 +1,4 @@
-from sqlalchemy import CheckConstraint, Column, event, String, Text
+from sqlalchemy import CheckConstraint, Column, String, Text, event
 
 from .base import BasicBase, check_fields_full_amount_invested_amount
 
