@@ -1,0 +1,6 @@
+APP_TITLE=Ваше название
+APP_DESCRIPTION=Ваше описание
+DATABASE_URL=sqlite+aiosqlite:///./fastapi.db
+SECRET=erwqtertrewteryttr
+FIRST_SUPERUSER_EMAIL=admin@example.com
+FRIST_SUPERUSER_PASSWORD=12345
