@@ -46,7 +46,7 @@ uvicorn app.main:app --reload
 ```
 Пример файла .env приведен в файле env_example.txt.
 ```
-### 3. Документация
+### 3. Документация по API
 ```
 http://..../docs - в формате Swagger
 ```
