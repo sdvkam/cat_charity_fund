@@ -46,8 +46,15 @@ uvicorn app.main:app --reload
 ```
 Пример файла .env приведен в файле env_example.txt.
 ```
+### 3. Документация
+```
+http://..../docs - в формате Swagger
+```
+```
+http://..../redoc - в формате ReDoc
+```
 
-### 3. Технологии
+### 4. Технологии
 - Python 3.9
 - FastAPI 0.78.0
 - SQLAlchemy 1.4.36
