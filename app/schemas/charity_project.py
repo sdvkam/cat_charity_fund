@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Optional
 
-from pydantic import BaseModel, Field, PositiveInt, root_validator
+from pydantic import BaseModel, Extra, Field, PositiveInt, root_validator
 
 
 class CharityProjectCreate(BaseModel):
@@ -28,12 +28,11 @@ class CharityProjectUpdate(BaseModel):
     description: Optional[str]
     full_amount: Optional[PositiveInt]
 
+    class Config:
+        extra = Extra.forbid
+
     @root_validator()
     def all_fields_query_not_empty_and_null(cls, values):
-        # the test: tests/test_charity_project.py::test_update_charity_project_full_amount_smaller_already_invested
-        # is written with an error, the following two lines are written to bypass it
-        if values['name'] == 'nunchaku' and values['description'] == 'Huge fan of chimichangas. Wanna buy a lot' and values['full_amount'] is None: # noqa
-            raise ValueError('Такое имя и описание проекта запрещены.')
         errors = 0
         for field in values:
             if values[field] in [None, '']:
